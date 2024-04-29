@@ -1,17 +1,19 @@
-import { useState } from "react";
 import styled from "styled-components";
 
 type MyProps = {
   label: string;
+  color: string;
+  onClickAction: Function;
+  isDisabled: boolean;
 };
 
 const Button = styled.button`
   min-height: 37px;
   width: 100%;
-  background-color: #FA6E2D;
+  background-color: ${props => props.color};
   color: white;
   font-size: 20px;
-  padding: 7px 28px;
+  padding: 5px 28px;
   border: 0px;
   border-radius: 7px;
   &:hover {
@@ -20,11 +22,10 @@ const Button = styled.button`
   }
 `;
 
-function ButtonComponent({ label }: MyProps) {
-
+function ButtonComponent({ label, color, onClickAction, isDisabled }: MyProps) {
 
   return (
-    <Button>{label}</Button>
+    <Button onClick={(e) => onClickAction(e)} color={color} disabled={isDisabled}>{label}</Button>
   );
 }
 
