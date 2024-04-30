@@ -25,7 +25,9 @@ const Button = styled.button`
 function ButtonComponent({ label, color, onClickAction, isDisabled }: MyProps) {
 
   return (
-    <Button onClick={(e) => onClickAction(e)} color={color} disabled={isDisabled}>{label}</Button>
+    <Button onClick={(e) => onClickAction(e)} color={color} disabled={isDisabled}>
+      {label}
+    </Button>
   );
 }
 
