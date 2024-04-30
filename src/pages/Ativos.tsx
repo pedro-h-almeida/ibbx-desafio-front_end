@@ -17,8 +17,11 @@ type sensorsListType = {
   assetId: string;
 };
 
+type MyProps = {
+  changeLoading: Function;
+};
 
-function AtivosPage() {
+function AtivosPage({ changeLoading }: MyProps) {
 
   const [nomeInput, setNomeInput] = useState('');
   const [ativoInput, setAtivoInput] = useState<assetsListType | null>(null);
@@ -43,27 +46,34 @@ function AtivosPage() {
   // HTTP Calls
   // -----------------------------------
   const getAssetsList = () => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets`)
       .then((res) => res.json())
       .then((data) => {
         setAssetsList(data);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const getSensorsList = (assetId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setSensorsList(data);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const newSensor = () => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${ativoInput?._id}/sensors`, {
       method: 'POST',
       body: JSON.stringify({ nome: nomeInput }),
@@ -77,12 +87,15 @@ function AtivosPage() {
         if (selectedAtivo) {
           getSensorsList(selectedAtivo._id);
         }
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   }
 
   const deleteSensor = (e: any, sensorId: string, assetId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}`, { method: 'DELETE' })
       .then((res) => res)
       .then((data) => {
@@ -90,8 +103,10 @@ function AtivosPage() {
         if (selectedAtivo) {
           getSensorsList(selectedAtivo._id);
         }
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   }
   // -----------------------------------

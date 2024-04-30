@@ -57,8 +57,11 @@ const ChartCard = styled.div`
   height: 100%;
 `;
 
+type MyProps = {
+  changeLoading: Function;
+};
 
-function SensoresPage() {
+function SensoresPage({ changeLoading }: MyProps) {
 
   const [valorInput, setValorInput] = useState('');
   const [dataInput, setDataInput] = useState('');
@@ -97,17 +100,21 @@ function SensoresPage() {
   // List
   // ______________________
   const getAssetsList = () => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setAssetsList(data);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const getSensorsList = (assetId: string, isNewField: boolean) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors`)
       .then((res) => res.json())
       .then((data) => {
@@ -118,24 +125,30 @@ function SensoresPage() {
           setSensorsList(data);
           setSelectedSensor(null)
         }
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const getSensorsDataList = (sensorId: string, assetId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setSensorDataList(data);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
   // ______________________
 
   const newSensorData = () => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${ativoInput?._id}/sensors/${sensorInput?._id}`, {
       method: 'POST',
       body: JSON.stringify({ valor: valorInput, data: dataInput }),
@@ -159,12 +172,15 @@ function SensoresPage() {
             getAssetsChartOption();
           }
         }
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   }
 
   const deleteSensorData = (e: any, sensorDataId: string, sensorId: string, assetId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}/${sensorDataId}`, { method: 'DELETE' })
       .then((res) => res)
       .then((data) => {
@@ -173,42 +189,53 @@ function SensoresPage() {
           getSensorsDataList(selectedSensor._id, selectedAtivo._id);
           getSensorDataChartOption(selectedSensor._id);
         }
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   }
 
   // Chart
   const getAssetsChartOption = () => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/getAssetsChart`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setChartOption(data.option);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const getSensorsChartOption = (assetId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/getSensorsChart/${assetId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setChartOption(data.option);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
 
   const getSensorDataChartOption = (sensorId: string) => {
+    changeLoading(true);
     fetch(`${process.env.REACT_APP_BASE_URL}/getSensorDataChart/${sensorId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setChartOption(data.option);
+        changeLoading(false);
       }).catch((err) => {
         console.log(err)
+        changeLoading(false);
       })
   };
   // -----------------------------------
