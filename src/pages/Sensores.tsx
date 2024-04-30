@@ -16,11 +16,13 @@ type assetsListType = {
 type sensorsListType = {
   _id: string;
   nome: string;
+  assetId: string;
 };
 
 type sensorDataListType = {
   _id: string;
   sensorId: string;
+  assetId: string;
   valor: number;
   data: string;
 };
@@ -85,7 +87,7 @@ function SensoresPage() {
   const handleDataInputChange = (text: string) => {
     setDataInput(text);
   }
-  
+
   const handleFiltroInputChange = (text: string) => {
     setFiltroInput(text);
   }
@@ -106,7 +108,7 @@ function SensoresPage() {
   };
 
   const getSensorsList = (assetId: string, isNewField: boolean) => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensors/${assetId}`)
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -121,8 +123,8 @@ function SensoresPage() {
       })
   };
 
-  const getSensorsDataList = (sensorId: string) => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensorData/${sensorId}`)
+  const getSensorsDataList = (sensorId: string, assetId: string) => {
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -134,9 +136,9 @@ function SensoresPage() {
   // ______________________
 
   const newSensorData = () => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensorData`, {
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${ativoInput?._id}/sensors/${sensorInput?._id}`, {
       method: 'POST',
-      body: JSON.stringify({ valor: valorInput, data: dataInput, sensorId: sensorInput?._id, assetId: ativoInput?._id }),
+      body: JSON.stringify({ valor: valorInput, data: dataInput }),
       headers: { "Content-type": "application/json; charset=UTF-8" }
     })
       .then((res) => res.json())
@@ -147,8 +149,8 @@ function SensoresPage() {
         setAtivoInput(null);
         setSensorInput(null);
         setInputSensorsList([]);
-        if (selectedSensor) {
-          getSensorsDataList(selectedSensor._id);
+        if (selectedSensor && selectedAtivo) {
+          getSensorsDataList(selectedSensor._id, selectedAtivo._id);
           getSensorDataChartOption(selectedSensor._id);
         } else {
           if (selectedAtivo) {
@@ -162,13 +164,13 @@ function SensoresPage() {
       })
   }
 
-  const deleteSensorData = (e: any, id: string) => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensorData/${id}`, { method: 'DELETE' })
+  const deleteSensorData = (e: any, sensorDataId: string, sensorId: string, assetId: string) => {
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}/${sensorDataId}`, { method: 'DELETE' })
       .then((res) => res)
       .then((data) => {
         console.log(data);
-        if (selectedSensor) {
-          getSensorsDataList(selectedSensor._id);
+        if (selectedSensor && selectedAtivo) {
+          getSensorsDataList(selectedSensor._id, selectedAtivo._id);
           getSensorDataChartOption(selectedSensor._id);
         }
       }).catch((err) => {
@@ -335,8 +337,10 @@ function SensoresPage() {
                           (value) => {
                             if (value?._id) {
                               setSelectedSensor(value)
-                              getSensorsDataList(value._id);
                               getSensorDataChartOption(value._id);
+                              if (selectedAtivo) {
+                                getSensorsDataList(value._id, selectedAtivo._id);
+                              }
                             }
                           }
                         }
@@ -402,7 +406,7 @@ function SensoresPage() {
                                   </Col>
                                 </Col>
                                 <Col style={{ paddingTop: 16, paddingBottom: 10 }} $sm={12} $md={3} $lg={2}>
-                                  <ButtonComponent onClickAction={(e: any) => deleteSensorData(e, element._id)} label='Deletar' color='red' isDisabled={false} />
+                                  <ButtonComponent onClickAction={(e: any) => deleteSensorData(e, element._id, element.sensorId, element.assetId)} label='Deletar' color='red' isDisabled={false} />
                                 </Col>
                               </Row>
                               <Divider />

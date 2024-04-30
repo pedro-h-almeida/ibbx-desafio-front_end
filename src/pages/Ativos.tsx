@@ -14,6 +14,7 @@ type assetsListType = {
 type sensorsListType = {
   _id: string;
   nome: string;
+  assetId: string;
 };
 
 
@@ -52,7 +53,7 @@ function AtivosPage() {
   };
 
   const getSensorsList = (assetId: string) => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensors/${assetId}`)
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -63,9 +64,9 @@ function AtivosPage() {
   };
 
   const newSensor = () => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensors`, {
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${ativoInput?._id}/sensors`, {
       method: 'POST',
-      body: JSON.stringify({ nome: nomeInput, assetId: ativoInput?._id }),
+      body: JSON.stringify({ nome: nomeInput }),
       headers: { "Content-type": "application/json; charset=UTF-8" }
     })
       .then((res) => res.json())
@@ -81,8 +82,8 @@ function AtivosPage() {
       })
   }
 
-  const deleteSensor = (e: any, id: string) => {
-    fetch(`${process.env.REACT_APP_BASE_URL}/sensors/${id}`, { method: 'DELETE' })
+  const deleteSensor = (e: any, sensorId: string, assetId: string) => {
+    fetch(`${process.env.REACT_APP_BASE_URL}/assets/${assetId}/sensors/${sensorId}`, { method: 'DELETE' })
       .then((res) => res)
       .then((data) => {
         console.log(data);
@@ -204,7 +205,7 @@ function AtivosPage() {
                                   </Col>
                                 </Col>
                                 <Col style={{ paddingTop: 16, paddingBottom: 10 }} $sm={12} $md={3} $lg={2}>
-                                  <ButtonComponent onClickAction={(e: any) => deleteSensor(e, element._id)} label='Deletar' color='red' isDisabled={false} />
+                                  <ButtonComponent onClickAction={(e: any) => deleteSensor(e, element._id, element.assetId)} label='Deletar' color='red' isDisabled={false} />
                                 </Col>
                               </Row>
                               <Divider />
